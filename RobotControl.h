@@ -6,7 +6,7 @@
 class RobotControl{
 private:
     u8 ID[6] = {0, 1, 2, 3, 4, 5};
-    s16 Position[6] = {2047, 2047, 2047, 2047, 2047, 2047};
+    s16 Position[6] = {2048, 2048, 2048, 2048, 2048, 2048};
     u16 Speed[6] = {80, 80, 80, 80, 80, 80};
     u8 ACC[6] = {50, 50, 50, 50, 50, 50};
     SMSBL sm;
@@ -16,10 +16,10 @@ public:
     {
         for (int i = 0; i < 6; i++)
         {
-            Position[i] = 2047;
+            Position[i] = 2048;
         }
         sm.SyncWritePosEx(ID, 6, Position, Speed, ACC);
-        usleep(5e6);
+        usleep(8e6);
         std::cout << "Reset" << std::endl;
     }
 
