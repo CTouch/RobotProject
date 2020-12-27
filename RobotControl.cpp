@@ -1,4 +1,4 @@
-#include"RobotControl.h"
+#include "RobotControl.h"
 RobotControl::RobotControl(const char * seritalPort)
 {
     if(!sm.begin(1000000,seritalPort)){
@@ -17,7 +17,7 @@ RobotControl::RobotControl(const char * seritalPort)
     sm.WheelMode(5);
 };
 
-void RobotControl::SolveXbox(xbox_map_t map){
+void RobotControl::SolveXbox(const xbox_map_t & map){
     if(map.a == 1 && map.b == 0){
         sm.WriteSpe(2,160,100);
     }
@@ -66,5 +66,44 @@ void RobotControl::SolveXbox(xbox_map_t map){
     {
         sm.WriteSpe(1,0,100);
     }
-    
+
+}
+
+void RobotControl::SolveXboxGlobal(RobotControl & robotControl, const xbox_map_t & map){
+    while(1){
+        std::cout << "in thread sovle xbox!\n";
+        std::chrono::milliseconds dura( 2000 );
+        if(map.a == 1 && map.b == 0){
+            robotControl.sm.WriteSpe(2,80,100);
+        }
+        else if(map.a == 0 && map.b == 1){
+            robotControl.sm.WriteSpe(2,-80,100);
+        }
+        else robotControl.sm.WriteSpe(2,0,100);
+        
+        if(map.x == 1 && map.y == 0){
+            robotControl.sm.WriteSpe(0,80,100);
+        }
+        else if(map.x == 0 && map.y == 1){
+            robotControl.sm.WriteSpe(0,-80,100);
+        }
+        else robotControl.sm.WriteSpe(0,0,100);
+        
+        if(map.xx == 32767){
+            robotControl.sm.WriteSpe(3,80,100);
+        }
+        else if(map.xx == -32767){
+            robotControl.sm.WriteSpe(3,-80,100);
+        }
+        else robotControl.sm.WriteSpe(3,0,100);
+
+        if(map.yy == 32767){
+            robotControl.sm.WriteSpe(4,80,100);
+        }
+        else if(map.yy == -32767){
+            robotControl.sm.WriteSpe(4,-80,100);
+        }
+        else robotControl.sm.WriteSpe(4,0,100);
+    }
+
 }

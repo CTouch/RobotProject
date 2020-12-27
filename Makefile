@@ -2,13 +2,13 @@
 build:Main
 
 Main:Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o
-	g++ -o Main Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o
+	g++  -o Main Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o -lpthread 
 
 
 Main.o:Main.cpp
 	g++ -c Main.cpp
 
-RobotControl.o:RobotControl.o
+RobotControl.o:RobotControl.cpp
 	g++ -c RobotControl.cpp
 SCS.o:SCS.h SCS.cpp
 	g++ -c SCS.cpp
