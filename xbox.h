@@ -74,15 +74,9 @@ typedef struct xbox_map
  
 }xbox_map_t;
  
-enum Status{
-    SINGLE_JOINT,
-    GLOBAL_CONTROL,
-};
 class xbox_control{
 private:
     int xbox_fd;
-    Status status = Status::SINGLE_JOINT;
-    // RobotControl robotContorl()
 public:
     ~xbox_control(){
         close(xbox_fd);

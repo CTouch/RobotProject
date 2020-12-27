@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     memset(&map, 0, sizeof(xbox_map_t));
     xbox_control test_xbox_control("/dev/input/js0");
     RobotControl robotControl(argv[1]);
-    std::thread thread_solve_xbox(RobotControl::SolveXboxGlobal, std::ref(robotControl), std::ref(map));
+    std::thread thread_solve_xbox(RobotControl::SolveXboxThread, std::ref(robotControl), std::ref(map));
     while(1)
     {
         len = test_xbox_control.xbox_map_read(&map);

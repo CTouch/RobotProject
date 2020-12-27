@@ -4,7 +4,10 @@
 #include <iostream>
 #include "xbox.h"
 #include <thread>
-
+enum Status{
+    SINGLE_JOINT,
+    GLOBAL_CONTROL
+};
 class RobotControl{
 private:
     u8 ID[6] = {0, 1, 2, 3, 4, 5};
@@ -14,6 +17,7 @@ private:
 public:
     SMSBL sm;
     RobotControl(const char * seritalPort);
+    Status status = SINGLE_JOINT;
     void Reset()
     {
         for (int i = 0; i < 6; i++)
@@ -26,7 +30,7 @@ public:
     }
 
     void SolveXbox(const xbox_map_t &map);
-    static void SolveXboxGlobal(RobotControl & robotControl,const xbox_map_t &map);
-
+    static void SolveXboxThread(RobotControl & robotControl,const xbox_map_t &map);
+    void SolveGlobalControl(const xbox_map_t &map);
 };
 #endif
