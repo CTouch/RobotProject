@@ -59,16 +59,23 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map)
     Eigen::Matrix<double, 6, 1> motor_angle;
     motor_angle << 0, 0, 0, 0, 0, 0;
 
+    std::cout << "motor angle (in lin):" << std::endl; 
     for (int i = 0; i < 6; i++)
     {
         motor_angle(i, 0) = direction[i] * LIN2RAD(feedback[i].Pos);
+        std::cout << feedback[i].Pos << std::endl;
     }
+    std::cout << "motor angle (in degree):\n" << motor_angle << std::endl; 
+
+
 
     Eigen::Matrix<double, 6, 1> motor_speed = Cal_global_vel2motor_vel(motor_angle, global_speed);
 
+    std::cout << "motor vel (in lin):" << std::endl; 
     for (int i = 0; i < 6; i++)
     {
-        sm.WriteSpe(i, direction[i] * motor_speed(i, 0), 100);
+        // sm.WriteSpe(i, direction[i] * motor_speed(i, 0), 100);
+        std::cout << RAD2LIN(motor_speed(i, 0)) << std::endl;
     }
 }
 void RobotControl::SolveXbox(const xbox_map_t &map)
