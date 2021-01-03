@@ -178,3 +178,16 @@ void RobotControl::Reset()
 
     std::cout << "Reset" << std::endl;
 }
+
+void RobotControl::SetPose(LearnPoint point){
+
+}
+void RobotControl::RePerform(){
+    for(int i = 0;i < 6;i++){
+        // SetPose(PointList[i])
+    }
+    for(int i = 0;i < PointList.size();i++){
+        SetPose(PointList[i]);
+    }
+    
+}
