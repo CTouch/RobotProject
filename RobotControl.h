@@ -12,6 +12,14 @@ enum Status{
     SINGLE_JOINT,
     GLOBAL_CONTROL
 };
+
+#define GLOBAL_VEL 100      // in mm/s
+#define SINGLE_VEL 400
+#define RAD2LIN(x) ((x)*4096/360/50)
+#define LIN2RAD(x) ((x)*50*360/4096)
+
+int direction[6] = {-1, 1, -1, -1, 1, 1};
+
 class RobotControl{
 private:
     u8 ID[6] = {0, 1, 2, 3, 4, 5};

@@ -18,6 +18,48 @@ RobotControl::RobotControl(const char * seritalPort)
 };
 
 void RobotControl::SolveGlobalControl(const xbox_map_t &map){
+    double vx, vy, vz;
+    if (map.xx > 0)
+    {
+        vx = GLOBAL_VEL;
+    }
+    else if (map.xx < 0)
+    {
+        vx = -1 * GLOBAL_VEL;
+    }
+    else
+    {
+        vx = 0;
+    }
+    
+    if (map.yy > 0)
+    {
+        vy = GLOBAL_VEL;
+    }
+    else if (map.yy < 0)
+    {
+        vy = -1 * GLOBAL_VEL;
+    }
+    else
+    {
+        vy = 0;
+    }
+
+    if (map.y && !map.a)
+    {
+        vz = GLOBAL_VEL;
+    }
+    else if (!map.y && map.a)
+    {
+        vz = -1 * GLOBAL_VEL;
+    }
+    else
+    {
+        vz = 0;
+    }
+    
+    
+    
 
 }
 void RobotControl::SolveXbox(const xbox_map_t & map){
