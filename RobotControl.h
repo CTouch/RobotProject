@@ -4,6 +4,10 @@
 #include <iostream>
 #include "xbox.h"
 #include <thread>
+#include "FeedBack.h"
+
+extern FeedBack feedback[6];
+
 enum Status{
     SINGLE_JOINT,
     GLOBAL_CONTROL

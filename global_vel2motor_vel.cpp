@@ -13,18 +13,15 @@ Eigen::Matrix<double, 3, 1> tr2RPY(Eigen::Matrix<double, 3, 3> pose);
 
 int main()
 {
-//	double b[6]={0,0,0,0,0,0};
-	// double * b;
-	// b=(double*)malloc(6*sizeof(double));
 	Eigen::Matrix<double, 6, 1> b;
 	b << 0, 0, 0, 0, 0, 0;
+	Eigen::Matrix<double, 6, 1> global_vec;
+	global_vec << 1, 1, 1, 1, 1, 1;
+	Eigen::Matrix<double, 6, 1> a = Cal_global_vel2motor_vel(global_vec, b);
 	// for (int i=0;i<6;i++){
-	// 	b[i]=0;
+	// 	printf("%f \n",a[i]);
 	// }
-	Eigen::Matrix<double, 6, 1> a = Cal_global_vel2motor_vel(1,1,1,1,1,1,b);
-	for (int i=0;i<6;i++){
-		printf("%f \n",a[i]);
-	}
+	std::cout << a << std::endl;
 }
 
 
@@ -33,7 +30,6 @@ Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel (Eigen::Matrix<double , 6, 
 	J = J_solve(motor_angle);
 	std::cout << "J:" << J << std::endl;
 	Eigen::Matrix<double, 6, 1> motor_vel;
-	// static double motor_vel[6];
 	Eigen::Matrix<double, 6, 1> motor_vel_matrix;
 	// Eigen::Matrix<double, 6, 1> global_vel;
 	// global_vel(0,0)=vx;

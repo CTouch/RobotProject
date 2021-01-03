@@ -1,12 +1,15 @@
 .PHONY:build
 build:Main
 
-Main:Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o
-	g++  -o Main Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o -lpthread 
+Main:Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o FeedBack.o
+	g++  -o Main Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o FeedBack.o -lpthread 
 
 
-Main.o:Main.cpp
-	g++ -c Main.cpp
+Main.o:Main.cpp FeedBack.cpp
+	g++ -c Main.cpp FeedBack.cpp
+
+FeedBack.o:FeedBack.cpp
+	g++ -c FeedBack.cpp
 
 RobotControl.o:RobotControl.cpp
 	g++ -c RobotControl.cpp
@@ -24,3 +27,4 @@ xbox.o:xbox.cpp xbox.h
 clean:
 	-rm Main
 	-rm *.o
+	-rm *.gch
