@@ -6,6 +6,7 @@
 #include <thread>
 #include "FeedBack.h"
 #include "global_vel2motor_vel.h"
+#include "math.h"
 
 extern FeedBack feedback[6];
 
@@ -16,6 +17,7 @@ enum Status{
 
 #define GLOBAL_VEL 10      // in mm/s
 #define SINGLE_VEL 400
+#define THRESHOLD 5
 #define RAD2LIN(x) (((x)*4096/360/50)+2048)
 #define LIN2RAD(x) (((x)-2048)*50*360/4096)
 
@@ -29,16 +31,7 @@ public:
     SMSBL sm;
     RobotControl(const char * seritalPort);
     Status status = SINGLE_JOINT;
-    void Reset()
-    {
-        for (int i = 0; i < 6; i++)
-        {
-            Position[i] = 2048;
-        }
-        sm.SyncWritePosEx(ID, 6, Position, Speed, ACC);
-        usleep(8e6);
-        std::cout << "Reset" << std::endl;
-    }
+    void Reset();
 
     void SolveXbox(const xbox_map_t &map);
     static void SolveXboxThread(RobotControl & robotControl,const xbox_map_t &map);
