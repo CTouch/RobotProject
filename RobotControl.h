@@ -5,6 +5,7 @@
 #include "xbox.h"
 #include <thread>
 #include "FeedBack.h"
+#include "global_vel2motor_vel.h"
 
 extern FeedBack feedback[6];
 
@@ -13,12 +14,10 @@ enum Status{
     GLOBAL_CONTROL
 };
 
-#define GLOBAL_VEL 100      // in mm/s
+#define GLOBAL_VEL 10      // in mm/s
 #define SINGLE_VEL 400
-#define RAD2LIN(x) ((x)*4096/360/50)
-#define LIN2RAD(x) ((x)*50*360/4096)
-
-int direction[6] = {-1, 1, -1, -1, 1, 1};
+#define RAD2LIN(x) (((x)*4096/360/50)+2048)
+#define LIN2RAD(x) (((x)-2048)*50*360/4096)
 
 class RobotControl{
 private:

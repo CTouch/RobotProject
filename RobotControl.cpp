@@ -1,4 +1,9 @@
 #include "RobotControl.h"
+
+extern FeedBack feedback[6];
+
+int direction[6] = {-1, 1, -1, -1, 1, 1};
+
 RobotControl::RobotControl(const char * seritalPort)
 {
     if(!sm.begin(1000000,seritalPort)){
@@ -18,47 +23,49 @@ RobotControl::RobotControl(const char * seritalPort)
 };
 
 void RobotControl::SolveGlobalControl(const xbox_map_t &map){
-    double vx, vy, vz;
-    if (map.xx > 0)
-    {
-        vx = GLOBAL_VEL;
-    }
-    else if (map.xx < 0)
-    {
-        vx = -1 * GLOBAL_VEL;
-    }
-    else
-    {
-        vx = 0;
-    }
+    Eigen::Matrix<double, 6, 1> global_speed;
+    global_speed << 0,0,10,0,0,0;
     
-    if (map.yy > 0)
+    // if (map.xx > 0)
+    // {
+    //     global_speed(0,0) = GLOBAL_VEL;
+    // }
+    // else if (map.xx < 0)
+    // {
+    //     global_speed(0,0) = -1 * GLOBAL_VEL;
+    // }
+    
+    // if (map.yy > 0)
+    // {
+    //     global_speed(1,0) = GLOBAL_VEL;
+    // }
+    // else if (map.yy < 0)
+    // {
+    //     global_speed(1,0) = -1 * GLOBAL_VEL;
+    // }
+
+    // if (map.y && !map.a)
+    // {
+    //     global_speed(2,0) = GLOBAL_VEL;
+    // }
+    // else if (!map.y && map.a)
+    // {
+    //     global_speed(2,0) = -1 * GLOBAL_VEL;
+    // }
+    
+    Eigen::Matrix<double, 6, 1> motor_angle;
+
+    for (int i = 0; i < 6; i++)
     {
-        vy = GLOBAL_VEL;
-    }
-    else if (map.yy < 0)
-    {
-        vy = -1 * GLOBAL_VEL;
-    }
-    else
-    {
-        vy = 0;
+        motor_angle(i, 0) = direction[i] * LIN2RAD(feedback[i].Pos);
     }
 
-    if (map.y && !map.a)
+    Eigen::Matrix<double, 6, 1> motor_speed = Cal_global_vel2motor_vel(motor_angle, global_speed);
+
+    for (int i = 0; i < 6; i++)
     {
-        vz = GLOBAL_VEL;
+        sm.WriteSpe(i, direction[i] * motor_speed(i, 0), 100);
     }
-    else if (!map.y && map.a)
-    {
-        vz = -1 * GLOBAL_VEL;
-    }
-    else
-    {
-        vz = 0;
-    }
-    
-    
     
 
 }
@@ -73,11 +80,9 @@ void RobotControl::SolveXbox(const xbox_map_t & map){
     
     if(map.x == 1 && map.y == 0){
         sm.WriteSpe(0,400,100);
-        sm.WriteSpe(3,400,100);
     }
     else if(map.x == 0 && map.y == 1){
         sm.WriteSpe(0,-400,100);
-        sm.WriteSpe(3,-400,100);
     }
     else {
         sm.WriteSpe(0,0,100);
