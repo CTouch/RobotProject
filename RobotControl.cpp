@@ -62,10 +62,12 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map)
     std::cout << "motor angle (in lin):" << std::endl;
     for (int i = 0; i < 6; i++)
     {
-        motor_angle(i, 0) = direction[i] * LIN2RAD(feedback[i].Pos);
-        std::cout << feedback[i].Pos << std::endl;
+        sm.FeedBack(i);
+
+        motor_angle(i, 0) = direction[i] * LIN2RAD(sm.ReadPos(-1));
+        std::cout << sm.ReadPos(-1) << std::endl;
     }
-    motor_angle(2, 0) = direction[2] * (LIN2RAD(feedback[1].Pos) + LIN2RAD(feedback[2].Pos));
+    motor_angle(2, 0) = direction[2] * (RAD2LIN(direction[1]*motor_angle(1,0)) + sm.ReadPos(-1));
 
     std::cout << "motor angle (in degree):\n"
               << motor_angle << std::endl;
