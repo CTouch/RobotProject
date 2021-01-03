@@ -16,11 +16,13 @@ enum Status{
     GLOBAL_CONTROL
 };
 
-#define GLOBAL_VEL 10      // in mm/s
+#define GLOBAL_VEL 10  // in mm/s
 #define SINGLE_VEL 400
 #define THRESHOLD 5
-#define RAD2LIN(x) (((x)*4096/360/50)+2048)
-#define LIN2RAD(x) (((x)-2048)*50*360/4096)
+#define RAD2LIN(x) (((x)*4096/360)+2048)
+#define LIN2RAD(x) (((x)-2048)*360/4096)
+#define DEG2VEL(x) ((x)*4096/360)
+#define VEL2DEG(x) ((x)*360/4096)
 
 class LearnPoint{
 public:

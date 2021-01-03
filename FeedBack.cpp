@@ -47,6 +47,7 @@ void update_data()
 		// std::cout << ("%d", sm.ReadMove(-1)) << std::endl;
 		feedback[i].Move = sm.ReadMove(-1);
 	}
+	// feedback[2].Pos = feedback[1].Pos + feedback[2].Pos;
 
 }
 
