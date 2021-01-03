@@ -1,6 +1,6 @@
 #include "global_vel2motor_vel.h"
 
-Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel(Eigen::Matrix<double, 6, 1> global_vel, Eigen::Matrix<double, 6, 1> motor_angle)
+Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel(Eigen::Matrix<double, 6, 1> motor_angle, Eigen::Matrix<double, 6, 1> global_vel)
 {
     Eigen::Matrix<double, 6, 6> J;
     J = J_solve(motor_angle);
