@@ -134,5 +134,17 @@ void RobotControl::SolveXboxThread(RobotControl & robotControl, const xbox_map_t
         std::chrono::milliseconds dura( 200 );
         std::this_thread::sleep_for( dura );
     }
+}
 
+void RobotControl::SetPose(LearnPoint point){
+
+}
+void RobotControl::RePerform(){
+    for(int i = 0;i < 6;i++){
+        // SetPose(PointList[i])
+    }
+    for(int i = 0;i < PointList.size();i++){
+        SetPose(PointList[i]);
+    }
+    
 }

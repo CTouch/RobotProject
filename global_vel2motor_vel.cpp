@@ -4,7 +4,7 @@ Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel(Eigen::Matrix<double, 6, 1>
 {
     Eigen::Matrix<double, 6, 6> J;
     J = J_solve(motor_angle);
-    std::cout << "J:" << J << std::endl;
+    // std::cout << "J:" << J << std::endl;
     Eigen::Matrix<double, 6, 1> motor_vel;
     // static double motor_vel[6];
     Eigen::Matrix<double, 6, 1> motor_vel_matrix;
@@ -170,3 +170,11 @@ Eigen::Matrix<double, 3, 1> tr2RPY(Eigen::Matrix<double, 3, 3> pose)
     RPY << R, P, Y;
     return RPY;
 }
+
+// int main(){
+//     Eigen::Matrix<double, 6, 1> a, b, c;
+//     b << -3, -5, 4, -2, -8, -149;
+//     c <<  0, 0, 1, 0, 0, 0;
+//     a = Cal_global_vel2motor_vel(c,b);
+//     std::cout << a;
+// }
