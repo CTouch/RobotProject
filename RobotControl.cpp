@@ -54,6 +54,7 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map){
     // }
     
     Eigen::Matrix<double, 6, 1> motor_angle;
+    motor_angle << 0,0,0,0,0,0;
 
     for (int i = 0; i < 6; i++)
     {
