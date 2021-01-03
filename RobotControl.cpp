@@ -137,14 +137,29 @@ void RobotControl::SolveXboxThread(RobotControl & robotControl, const xbox_map_t
 }
 
 void RobotControl::SetPose(LearnPoint point){
-
+    sm.SyncWritePosEx(ID, 6, point.Position, Speed, ACC);
+    while(1){
+        bool FinishFlag = 1;
+        for(int i = 0;i < 6;i++){
+            if(abs(feedback[i].Pos - point.Position[i]) > 10){
+               FinishFlag = 0;
+               break;
+            }
+        }
+        if(FinishFlag) break;
+    }
 }
 void RobotControl::RePerform(){
     for(int i = 0;i < 6;i++){
-        // SetPose(PointList[i])
+        if (i >= 3) sm.unLockEprom(i);
+        sm.writeByte(i, SMSBL_MODE, 0);
     }
     for(int i = 0;i < PointList.size();i++){
         SetPose(PointList[i]);
     }
-    
+    if (status == Status::SINGLE_JOINT)
+        for(int i = 0;i < 6;i++){
+            if (i >= 3) sm.unLockEprom(i);
+            sm.WheelMode(i);
+        }
 }
