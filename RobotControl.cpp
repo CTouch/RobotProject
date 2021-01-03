@@ -12,7 +12,7 @@ RobotControl::RobotControl(const char *seritalPort)
         std::cout << "Failed to init smsbl motor!" << std::endl;
         return;
     }
-    Reset();
+    // Reset();
     sm.WheelMode(0);
     sm.WheelMode(1);
     sm.WheelMode(2);

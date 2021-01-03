@@ -14,7 +14,7 @@ void MyFeedBack(char * serial_name)
 		return;
 	}
 	std::thread timer_thread(refresh_timer);
-	// timer_thread.join();
+	timer_thread.detach();
 	// sm.end();
 	return;
 }
