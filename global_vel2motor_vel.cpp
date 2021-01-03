@@ -1,23 +1,6 @@
 #include "global_vel2motor_vel.h"
 
-// int main()
-// {
-//     //	double b[6]={0,0,0,0,0,0};
-//     // double * b;
-//     // b=(double*)malloc(6*sizeof(double));
-//     Eigen::Matrix<double, 6, 1> b;
-//     b << 0, 0, 0, 0, 0, 0;
-//     // for (int i=0;i<6;i++){
-//     // 	b[i]=0;
-//     // }
-//     Eigen::Matrix<double, 6, 1> a = Cal_global_vel2motor_vel(b, 1, 1, 1, 0, 0, 0);
-//     for (int i = 0; i < 6; i++)
-//     {
-//         printf("%f \n", a[i]);
-//     }
-// }
-
-Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel (Eigen::Matrix<double, 6, 1> global_vel, Eigen::Matrix<double, 6, 1> motor_angle)
+Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel(Eigen::Matrix<double, 6, 1> global_vel, Eigen::Matrix<double, 6, 1> motor_angle)
 {
     Eigen::Matrix<double, 6, 6> J;
     J = J_solve(motor_angle);

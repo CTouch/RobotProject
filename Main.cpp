@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 {
     xbox_map_t map;
     int len, type;
-    MyFeedBack(argv[1]);
+    // MyFeedBack(argv[1]);
 
     memset(&map, 0, sizeof(xbox_map_t));
     xbox_control test_xbox_control("/dev/input/js0");

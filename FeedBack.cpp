@@ -14,8 +14,8 @@ void MyFeedBack(char * serial_name)
 		return;
 	}
 	std::thread timer_thread(refresh_timer);
-	timer_thread.join();
-	sm.end();
+	// timer_thread.join();
+	// sm.end();
 	return;
 }
 
@@ -29,22 +29,22 @@ void update_data()
 			for (int j = 0; j < 5; j++)
 				std::cout << ("\n") << std::endl;
 		}
-		std::cout << ("#####Joint: %d#####", i) << std::endl;
+		// std::cout << ("#####Joint: %d#####", i) << std::endl;
 		feedback[i].Joint = i;
-		std::cout << ("Pos: ");
-		std::cout << ("%d", sm.ReadPos(-1)) << std::endl;
+		// std::cout << ("Pos: ");
+		// std::cout << ("%d", sm.ReadPos(-1)) << std::endl;
 		feedback[i].Pos = sm.ReadPos(-1);
-		std::cout << ("Speed: ");
-		std::cout << ("%d", sm.ReadSpeed(-1)) << std::endl;
+		// std::cout << ("Speed: ");
+		// std::cout << ("%d", sm.ReadSpeed(-1)) << std::endl;
 		feedback[i].Speed = sm.ReadSpeed(-1);
-		std::cout << ("Load: ");
-		std::cout << ("%d", sm.ReadLoad(-1)) << std::endl;
+		// std::cout << ("Load: ");
+		// std::cout << ("%d", sm.ReadLoad(-1)) << std::endl;
 		feedback[i].Load = sm.ReadLoad(-1);
-		std::cout << ("Temper: ");
-		std::cout << ("%d", sm.ReadTemper(-1)) << std::endl;
+		// std::cout << ("Temper: ");
+		// std::cout << ("%d", sm.ReadTemper(-1)) << std::endl;
 		feedback[i].Temper = sm.ReadTemper(-1);
-		std::cout << ("Move: ");
-		std::cout << ("%d", sm.ReadMove(-1)) << std::endl;
+		// std::cout << ("Move: ");
+		// std::cout << ("%d", sm.ReadMove(-1)) << std::endl;
 		feedback[i].Move = sm.ReadMove(-1);
 	}
 

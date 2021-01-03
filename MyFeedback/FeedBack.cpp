@@ -6,9 +6,9 @@ FeedBack feedback[6];
 
 
 
-void MyFeedBack(int argc, char **argv)
+void MyFeedBack(char * serial_name)
 {
-	if (!sm.begin(1000000, argc < 2 ? "/dev/ttyUSB0" : argv[1]))
+	if (!sm.begin(1000000, serial_name))
 	{
 		printf("Failed to read serial\n");
 		return;
