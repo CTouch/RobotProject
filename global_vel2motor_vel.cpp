@@ -7,23 +7,6 @@ Eigen::Matrix<double, 4, 4> T_solve(double a, double alpha, double d, double the
 Eigen::Matrix<double, 3, 1> rodriguez(Eigen::Matrix<double, 3, 3> pose, Eigen::Matrix<double, 3, 1> k);
 Eigen::Matrix<double, 3, 1> tr2RPY(Eigen::Matrix<double, 3, 3> pose);
 
-int main()
-{
-    //	double b[6]={0,0,0,0,0,0};
-    // double * b;
-    // b=(double*)malloc(6*sizeof(double));
-    Eigen::Matrix<double, 6, 1> b;
-    b << 0, 0, 0, 0, 0, 0;
-    // for (int i=0;i<6;i++){
-    // 	b[i]=0;
-    // }
-    Eigen::Matrix<double, 6, 1> a = Cal_global_vel2motor_vel(b, 1, 1, 1, 0, 0, 0);
-    for (int i = 0; i < 6; i++)
-    {
-        printf("%f \n", a[i]);
-    }
-}
-
 Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel (Eigen::Matrix<double, 6, 1> motor_angle, double vx , double vy , double vz , double v_roll=0 , double v_pitch=0 , double v_yaw=0)
 {
     Eigen::Matrix<double, 6, 6> J;
