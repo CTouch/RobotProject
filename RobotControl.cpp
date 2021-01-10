@@ -186,6 +186,8 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
 }
 
 void RobotControl::SetPose(LearnPoint point){
+    
+    
     sm.SyncWritePosEx(ID, 6, point.joint, Speed, ACC);
     while(1){
         bool FinishFlag = 1;
