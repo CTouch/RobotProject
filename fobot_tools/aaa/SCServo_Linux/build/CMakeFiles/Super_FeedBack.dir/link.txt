@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++11 -O3  -rdynamic CMakeFiles/Super_FeedBack.dir/examples/SUPER/FeedBack/main.cc.o CMakeFiles/Super_FeedBack.dir/SCS.cpp.o CMakeFiles/Super_FeedBack.dir/SCSCL.cpp.o CMakeFiles/Super_FeedBack.dir/SCSerial.cpp.o CMakeFiles/Super_FeedBack.dir/SMSBL.cpp.o CMakeFiles/Super_FeedBack.dir/SMSCL.cpp.o  -o Super_FeedBack -lncurses -lpthread 

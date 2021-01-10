@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++11 -O3  -rdynamic CMakeFiles/Super_GoHome.dir/examples/SUPER/GoHome/main.cc.o CMakeFiles/Super_GoHome.dir/SCS.cpp.o CMakeFiles/Super_GoHome.dir/SCSCL.cpp.o CMakeFiles/Super_GoHome.dir/SCSerial.cpp.o CMakeFiles/Super_GoHome.dir/SMSBL.cpp.o CMakeFiles/Super_GoHome.dir/SMSCL.cpp.o  -o Super_GoHome 
