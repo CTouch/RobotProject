@@ -8,6 +8,7 @@
 #include "global_vel2motor_vel.h"
 #include "math.h"
 #include <vector>
+#include "Check.h"
 
 extern FeedBack feedback[6];
 

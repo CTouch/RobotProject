@@ -26,26 +26,35 @@ void update_data()
 		if (sm.FeedBack(i) == -1)
 		{
 			std::cout << ("Read Error!\n") << std::endl;
-			for (int j = 0; j < 5; j++)
-				std::cout << ("\n") << std::endl;
+			// for (int j = 0; j < 5; j++)
+			// 	std::cout << ("\n") << std::endl;
 		}
-		// std::cout << ("#####Joint: %d#####", i) << std::endl;
 		feedback[i].Joint = i;
+
+		feedback[i].Pos = sm.ReadPos(-1);
+
+		feedback[i].Speed = sm.ReadSpeed(-1);
+
+		feedback[i].Load = sm.ReadLoad(-1);
+
+		feedback[i].Temper = sm.ReadTemper(-1);
+
+		feedback[i].Move = sm.ReadMove(-1);
+
+
+		// std::cout << ("#####Joint: %d#####", i) << std::endl;
 		// std::cout << ("Pos: ");
 		// std::cout << ("%d", sm.ReadPos(-1)) << std::endl;
-		feedback[i].Pos = sm.ReadPos(-1);
 		// std::cout << ("Speed: ");
 		// std::cout << ("%d", sm.ReadSpeed(-1)) << std::endl;
-		feedback[i].Speed = sm.ReadSpeed(-1);
 		// std::cout << ("Load: ");
 		// std::cout << ("%d", sm.ReadLoad(-1)) << std::endl;
-		feedback[i].Load = sm.ReadLoad(-1);
 		// std::cout << ("Temper: ");
 		// std::cout << ("%d", sm.ReadTemper(-1)) << std::endl;
-		feedback[i].Temper = sm.ReadTemper(-1);
 		// std::cout << ("Move: ");
 		// std::cout << ("%d", sm.ReadMove(-1)) << std::endl;
-		feedback[i].Move = sm.ReadMove(-1);
+
+
 	}
 	// feedback[2].Pos = feedback[1].Pos + feedback[2].Pos;
 

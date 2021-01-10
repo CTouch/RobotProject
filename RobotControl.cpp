@@ -186,8 +186,24 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
 }
 
 void RobotControl::SetPose(LearnPoint point){
-    
-    
+    if (Check_Safe())
+    {
+        sm.WheelMode(0);
+        sm.WheelMode(1);
+        sm.WheelMode(2);
+        sm.unLockEprom(3);
+        sm.WheelMode(3);
+        sm.unLockEprom(4);
+        sm.WheelMode(4);
+        sm.unLockEprom(5);
+        sm.WheelMode(5);
+        for (int i = 0; i < 6; i++)
+        {
+            sm.WriteSpe(i, 0, 100);
+        }
+        std::cout << "Unsafe Error" << std::endl;
+        exit(0);
+    }
     sm.SyncWritePosEx(ID, 6, point.joint, Speed, ACC);
     while(1){
         bool FinishFlag = 1;
@@ -220,6 +236,7 @@ void RobotControl::AddCurrentPose(){
     LearnPoint pose;
     for(int i = 0;i < 6;i++){
         pose.joint[i] = feedback[i].Pos;
+        std::cout << "Pose " << i << ": " << pose.joint[i] << std::endl;
     }
     PointList.push_back(pose);
 }
