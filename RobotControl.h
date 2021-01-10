@@ -9,6 +9,7 @@
 #include "math.h"
 #include <vector>
 #include "Check.h"
+#include "Utils.h"
 
 extern FeedBack feedback[6];
 
@@ -26,11 +27,11 @@ enum Status{
 #define DEG2VEL(x) ((x)*4096/360)
 #define VEL2DEG(x) ((x)*360/4096)
 
-class LearnPoint{
-public:
-    // LearnPoint(){}
-    s16 joint[6];        // joint angle. 2048  
-};
+// class LearnPoint{
+// public:
+//     // LearnPoint(){}
+//     s16 joint[6];        // joint angle. 2048  
+// };
 class RobotControl{
 private:
     u8 ID[6] = {0, 1, 2, 3, 4, 5};

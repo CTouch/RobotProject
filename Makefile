@@ -1,14 +1,29 @@
 .PHONY:build
 build:Main
+# PROJECT := Main
+# SRCS    := $(wildcard *.cpp)
+# OBJS    := $(SRCS:.cpp=.o)
 
-Main:Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o FeedBack.o global_vel2motor_vel.o
-	g++  -o Main Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o FeedBack.o global_vel2motor_vel.o -lpthread 
+# EXEEXT?=.x
+# EXE   := $(PROJECT)$(EXEEXT)
+
+# $(EXE): $(OBJS)
+# 	$(CXX) -o $@ $(OBJS) -lpthread
+
+# $(OBJS): $(SRCS)
+# 	$(CXX) -c $< -o $@
+
+Main:Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o FeedBack.o global_vel2motor_vel.o Check.o
+	g++  -o Main Main.o xbox.o SMSBL.o SCSerial.o SCS.o RobotControl.o FeedBack.o global_vel2motor_vel.o Check.o -lpthread 
 
 Main.o:Main.cpp FeedBack.cpp
 	g++ -c Main.cpp FeedBack.cpp
 
 FeedBack.o:FeedBack.cpp
 	g++ -c FeedBack.cpp
+
+Check.o:Check.cpp
+	g++ -c Check.cpp
 
 global_vel2motor_vel.o:global_vel2motor_vel.cpp 
 	g++ -c global_vel2motor_vel.cpp 
