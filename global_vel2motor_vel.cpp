@@ -1,6 +1,6 @@
 #include "global_vel2motor_vel.h"
 
-Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel(Eigen::Matrix<double, 6, 1> global_vel, Eigen::Matrix<double, 6, 1> motor_angle)
+Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel(Eigen::Matrix<double, 6, 1> motor_angle, Eigen::Matrix<double, 6, 1> global_vel)
 {
     Eigen::Matrix<double, 6, 6> J;
     J = J_solve(motor_angle);
@@ -16,11 +16,10 @@ Eigen::Matrix<double, 6, 1> Cal_global_vel2motor_vel(Eigen::Matrix<double, 6, 1>
     // global_vel(4,0)=v_pitch;
     // global_vel(5,0)=v_yaw;
     motor_vel_matrix = J.inverse() * global_vel;
-    for (int i = 0; i < 6; i++)
-    {
-        motor_vel[i] = motor_vel_matrix(i, 0);
-    }
-    return motor_vel;
+
+    std::cout << "motor vel (in degree):\n" << motor_vel_matrix << std::endl;
+
+    return motor_vel_matrix;
 }
 
 Eigen::Matrix<double, 6, 6> J_solve(Eigen::Matrix<double, 6, 1> motor_angle)
