@@ -174,7 +174,7 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
             robotControl.SolveXbox(map);
         }
         else if (robotControl.status = Status::GLOBAL_CONTROL){
-            // robotControl.SolveGlobalControl(map);
+            robotControl.SolveGlobalControl(map);
         }
         else if (robotControl.status == Status::REPERFORM){
             robotControl.RePerformNaive();
@@ -217,7 +217,10 @@ void RobotControl::AddCurrentPose(){
     LearnPoint pose;
     for(int i = 0;i < 6;i++){
         pose.joint[i] = feedback[i].Pos;
+        std::cout << pose.joint[i] << " ";
     }
+    std::cout << endl;
+
     PointList.push_back(pose);
 }
 
