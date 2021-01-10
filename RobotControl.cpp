@@ -158,26 +158,33 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
     {
         if (map.start == 1)
         {
+            std::cout << "start pushed\n";
             robotControl.status = Status::GLOBAL_CONTROL;
         }
         else if (map.back == 1)
         {
+            std::cout << "back pushed\n";
             robotControl.status = Status::SINGLE_JOINT;
         }
         else if (map.home == 1){
+            std::cout << "home pushed\n";
             robotControl.AddCurrentPose();
         }
         else if (map.lo == 1){
+            std::cout << "lo pushed\n";
             robotControl.status = Status::REPERFORM;
         }
 
         if (robotControl.status == Status::SINGLE_JOINT){
+            // std::cout << "single_joint\n";
             robotControl.SolveXbox(map);
         }
-        else if (robotControl.status = Status::GLOBAL_CONTROL){
-            robotControl.SolveGlobalControl(map);
+        else if (robotControl.status == Status::GLOBAL_CONTROL){
+            std::cout << "Global control\n";
+            // robotControl.SolveGlobalControl(map);
         }
         else if (robotControl.status == Status::REPERFORM){
+            std::cout << "Reperform\n";
             robotControl.RePerformNaive();
         }
         std::chrono::milliseconds dura(200);
@@ -204,6 +211,10 @@ void RobotControl::SetPose(LearnPoint point){
         std::cout << "Unsafe Error" << std::endl;
         exit(0);
     }
+    std::cout << "target:\n";
+    for(int j = 0; j < 6;j++){
+        std::cout << point.joint[j] << std::endl;
+    }
     sm.SyncWritePosEx(ID, 6, point.joint, Speed, ACC);
     while(1){
         bool FinishFlag = 1;
@@ -221,15 +232,20 @@ void RobotControl::RePerformNaive(){
         if (i >= 3) sm.unLockEprom(i);
         sm.writeByte(i, SMSBL_MODE, 0);
     }
+
     for (int i = 0; i < PointList.size(); i++)
     {
+        std::cout << "target:\n";
+        for(int j = 0; j < 6;j++){
+            std::cout << PointList[i].joint[j] << std::endl;
+        }
         SetPose(PointList[i]);
     }
-    if (status == Status::SINGLE_JOINT)
-        for(int i = 0;i < 6;i++){
-            if (i >= 3) sm.unLockEprom(i);
-            sm.WheelMode(i);
-        }
+    // if (status == Status::SINGLE_JOINT)
+    //     for(int i = 0;i < 6;i++){
+    //         if (i >= 3) sm.unLockEprom(i);
+    //         sm.WheelMode(i);
+    //     }
 }
 
 void RobotControl::AddCurrentPose(){
@@ -250,3 +266,17 @@ void RobotControl::AddCurrentPose(){
 //     }
 //     return pose;
 // }
+
+void RobotControl::RePerform0(){
+    for(int i = 0;i < 6;i++){
+        if (i >= 3) sm.unLockEprom(i);
+        sm.writeByte(i, SMSBL_MODE, 0);
+    }
+    for (int i = 0;i < PointList.size();i++){
+        LearnPoint CurrentPose;
+        for(int j = 0;j < 6;j++){
+            CurrentPose.joint[j] = feedback[j].Pos;
+        }
+        // for(int j = 0;j < 0)
+    }
+}

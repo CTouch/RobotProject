@@ -12,11 +12,17 @@ bool Check_Safe()
 	// check load
 	for (int i = 0; i < 6; i++)
 	{
-		if (abs(feedback[i].Load) > MAX_LOAD || abs(feedback[i].Speed) > MAX_VEL)
+		if (abs(feedback[i].Load) > MAX_LOAD)
 		{
 			ret = true;
-			break;
+			std::cout << "Load Unsafe!\n";
 		}
+		if (abs(feedback[i].Speed) > MAX_VEL)
+		{
+			ret = true;
+			std::cout << "Speed Unsafe!\n";
+		}																			
+		if (ret) break;
 	}
 
 	return ret;
