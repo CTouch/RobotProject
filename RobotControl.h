@@ -20,7 +20,7 @@ enum Status{
     REPERFORM
 };
 
-#define GLOBAL_VEL 10  // in mm/s
+#define GLOBAL_VEL 20  // in mm/s
 #define SINGLE_VEL 400
 #define THRESHOLD 5
 #define RAD2LIN(x) (((x)*4096/360)+2048)
