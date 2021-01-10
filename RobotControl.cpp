@@ -224,6 +224,7 @@ void RobotControl::SetPose(LearnPoint point){
     }
     // sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
     for (;;){
+        Check_Theta(point);
         sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
         usleep(201001);
         bool FinishFlag = 1;
