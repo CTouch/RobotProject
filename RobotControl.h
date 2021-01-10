@@ -13,7 +13,8 @@ extern FeedBack feedback[6];
 
 enum Status{
     SINGLE_JOINT,
-    GLOBAL_CONTROL
+    GLOBAL_CONTROL,
+    REPERFORM
 };
 
 #define GLOBAL_VEL 10  // in mm/s
@@ -26,7 +27,8 @@ enum Status{
 
 class LearnPoint{
 public:
-    s16 Position[6];        // motor angle. 2048  
+    // LearnPoint(){}
+    s16 joint[6];        // joint angle. 2048  
 };
 class RobotControl{
 private:
@@ -47,7 +49,14 @@ public:
 
     void ClearPointList(){PointList.clear();}
     void AddtoPointList(LearnPoint point){PointList.push_back(point);}
+    
+    // 添加当前六关节角度
+    void AddCurrentPose();
+
+    //// 获得当前6角度
+    // LearnPoint GetPose();       
     void SetPose(LearnPoint point);
-    void RePerform();
+
+    void RePerformNaive();
 };
 #endif
