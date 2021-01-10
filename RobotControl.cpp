@@ -164,21 +164,33 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
         {
             robotControl.status = Status::SINGLE_JOINT;
         }
-        if (robotControl.status == Status::SINGLE_JOINT)
+        else if (map.home == 1){
+            robotControl.AddCurrentPose();
+        }
+        else if (map.lo == 1){
+            robotControl.status = Status::REPERFORM;
+        }
+
+        if (robotControl.status == Status::SINGLE_JOINT){
             robotControl.SolveXbox(map);
-        else if (robotControl.status = Status::GLOBAL_CONTROL)
-            robotControl.SolveGlobalControl(map);
+        }
+        else if (robotControl.status = Status::GLOBAL_CONTROL){
+            // robotControl.SolveGlobalControl(map);
+        }
+        else if (robotControl.status == Status::REPERFORM){
+            robotControl.RePerformNaive();
+        }
         std::chrono::milliseconds dura(200);
         std::this_thread::sleep_for(dura);
     }
 }
 
 void RobotControl::SetPose(LearnPoint point){
-    sm.SyncWritePosEx(ID, 6, point.Position, Speed, ACC);
+    sm.SyncWritePosEx(ID, 6, point.joint, Speed, ACC);
     while(1){
         bool FinishFlag = 1;
         for(int i = 0;i < 6;i++){
-            if(abs(feedback[i].Pos - point.Position[i]) > 10){
+            if(abs(feedback[i].Pos - point.joint[i]) > 10){
                FinishFlag = 0;
                break;
             }
@@ -186,7 +198,7 @@ void RobotControl::SetPose(LearnPoint point){
         if(FinishFlag) break;
     }
 }
-void RobotControl::RePerform(){
+void RobotControl::RePerformNaive(){
     for(int i = 0;i < 6;i++){
         if (i >= 3) sm.unLockEprom(i);
         sm.writeByte(i, SMSBL_MODE, 0);
@@ -201,3 +213,19 @@ void RobotControl::RePerform(){
             sm.WheelMode(i);
         }
 }
+
+void RobotControl::AddCurrentPose(){
+    LearnPoint pose;
+    for(int i = 0;i < 6;i++){
+        pose.joint[i] = feedback[i].Pos;
+    }
+    PointList.push_back(pose);
+}
+
+// LearnPoint RobotControl::GetPose(){
+//     LearnPoint pose;
+//     for(int i = 0;i < 6;i++){
+//         pose.joint[i] = feedback[i].Pos;
+//     }
+//     return pose;
+// }
