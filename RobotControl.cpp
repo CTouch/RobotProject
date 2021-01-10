@@ -236,11 +236,7 @@ void RobotControl::AddCurrentPose(){
     LearnPoint pose;
     for(int i = 0;i < 6;i++){
         pose.joint[i] = feedback[i].Pos;
-<<<<<<< HEAD
-        std::cout << pose.joint[i] << " ";
-=======
         std::cout << "Pose " << i << ": " << pose.joint[i] << std::endl;
->>>>>>> ba918c25c0c061a1a1b9653c5c43078a5c8637df
     }
     std::cout << std::endl;
 
