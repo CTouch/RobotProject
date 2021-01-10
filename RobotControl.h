@@ -23,6 +23,8 @@ enum Status{
 #define GLOBAL_VEL 20  // in mm/s
 #define SINGLE_VEL 400
 #define THRESHOLD 5
+#define LEN_STEP 1
+
 #define RAD2LIN(x) (((x)*4096/360)+2048)
 #define LIN2RAD(x) (((x)-2048)*360/4096)
 #define DEG2VEL(x) ((x)*4096/360)
@@ -64,5 +66,9 @@ public:
     void RePerformNaive();
 
     void RePerform0();
+
+    void SetPose_Interpolate(LearnPoint curPoint, LearnPoint nextPoint);
+
+    std::vector<LearnPoint> Interpolation(LearnPoint curPoint, LearnPoint nextPoint);
 };
 #endif
