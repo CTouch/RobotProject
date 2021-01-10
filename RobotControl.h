@@ -37,6 +37,7 @@ private:
     s16 Position[6] = {2048, 2048, 2048, 2048, 2048, 2048};
     u16 Speed[6] = {80, 80, 80, 80, 80, 80};
     u8 ACC[6] = {50, 50, 50, 50, 50, 50};
+    const int RePerformStep = 10;
     std::vector<LearnPoint> PointList;
 public:
     SMSBL sm;
@@ -59,5 +60,7 @@ public:
     void SetPose(LearnPoint point);
 
     void RePerformNaive();
+
+    void RePerform0();
 };
 #endif

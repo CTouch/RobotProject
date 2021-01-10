@@ -225,11 +225,11 @@ void RobotControl::RePerformNaive(){
     {
         SetPose(PointList[i]);
     }
-    if (status == Status::SINGLE_JOINT)
-        for(int i = 0;i < 6;i++){
-            if (i >= 3) sm.unLockEprom(i);
-            sm.WheelMode(i);
-        }
+    // if (status == Status::SINGLE_JOINT)
+    //     for(int i = 0;i < 6;i++){
+    //         if (i >= 3) sm.unLockEprom(i);
+    //         sm.WheelMode(i);
+    //     }
 }
 
 void RobotControl::AddCurrentPose(){
@@ -250,3 +250,17 @@ void RobotControl::AddCurrentPose(){
 //     }
 //     return pose;
 // }
+
+void RobotControl::RePerform0(){
+    for(int i = 0;i < 6;i++){
+        if (i >= 3) sm.unLockEprom(i);
+        sm.writeByte(i, SMSBL_MODE, 0);
+    }
+    for (int i = 0;i < PointList.size();i++){
+        LearnPoint CurrentPose;
+        for(int j = 0;j < 6;j++){
+            CurrentPose.joint[j] = feedback[j].Pos;
+        }
+        
+    }
+}
