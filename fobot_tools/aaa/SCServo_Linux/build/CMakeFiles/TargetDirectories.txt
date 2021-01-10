@@ -1,6 +1,0 @@
-/home/shuoge/Git/fobot_tools/aaa/SCServo_Linux/build/CMakeFiles/rebuild_cache.dir
-/home/shuoge/Git/fobot_tools/aaa/SCServo_Linux/build/CMakeFiles/Super_WritePos.dir
-/home/shuoge/Git/fobot_tools/aaa/SCServo_Linux/build/CMakeFiles/Super_GoHome.dir
-/home/shuoge/Git/fobot_tools/aaa/SCServo_Linux/build/CMakeFiles/SCServo.dir
-/home/shuoge/Git/fobot_tools/aaa/SCServo_Linux/build/CMakeFiles/edit_cache.dir
-/home/shuoge/Git/fobot_tools/aaa/SCServo_Linux/build/CMakeFiles/Super_FeedBack.dir

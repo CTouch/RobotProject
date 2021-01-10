@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=c++11 -O3  -rdynamic CMakeFiles/Super_WritePos.dir/examples/SUPER/WritePos/main.cc.o CMakeFiles/Super_WritePos.dir/SCS.cpp.o CMakeFiles/Super_WritePos.dir/SCSCL.cpp.o CMakeFiles/Super_WritePos.dir/SCSerial.cpp.o CMakeFiles/Super_WritePos.dir/SMSBL.cpp.o CMakeFiles/Super_WritePos.dir/SMSCL.cpp.o  -o Super_WritePos 

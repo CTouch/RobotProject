@@ -16,6 +16,6 @@ extern FeedBack feedback[6];
 
 // Eigen::Matrix<double, 6, 1> Check_Safe(Eigen::Matrix<double, 6, 1> motor_angle, Eigen::Matrix<double, 6, 1> motor_vel); 
 bool Check_Safe(); 
-
+void Check_Theta(LearnPoint &send_theta);
 
 #endif
