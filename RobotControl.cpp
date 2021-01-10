@@ -219,7 +219,7 @@ void RobotControl::AddCurrentPose(){
         pose.joint[i] = feedback[i].Pos;
         std::cout << pose.joint[i] << " ";
     }
-    std::cout << endl;
+    std::cout << std::endl;
 
     PointList.push_back(pose);
 }
