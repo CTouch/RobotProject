@@ -173,42 +173,31 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
     }
 }
 
-void RobotControl::Reset()
-{
-    for (int i = 0; i < 6; i++)
-    {
-        Position[i] = initial[i];
-    }
-
-    bool reset_done = false;
-    sm.SyncWritePosEx(ID, 6, Position, Speed, ACC);
-    while (!reset_done)
-    {
-        reset_done = true;
-        for (int i = 0; i < 6; i++)
-        {
-            if (abs(feedback[i].Pos - initial[i]) > THRESHOLD)
-            {
-                reset_done = false;
-                break;
+void RobotControl::SetPose(LearnPoint point){
+    sm.SyncWritePosEx(ID, 6, point.Position, Speed, ACC);
+    while(1){
+        bool FinishFlag = 1;
+        for(int i = 0;i < 6;i++){
+            if(abs(feedback[i].Pos - point.Position[i]) > 10){
+               FinishFlag = 0;
+               break;
             }
         }
+        if(FinishFlag) break;
     }
-
-    std::cout << "Reset" << std::endl;
 }
-
-void RobotControl::SetPose(LearnPoint point)
-{
-}
-void RobotControl::RePerform()
-{
-    for (int i = 0; i < 6; i++)
-    {
-        // SetPose(PointList[i])
+void RobotControl::RePerform(){
+    for(int i = 0;i < 6;i++){
+        if (i >= 3) sm.unLockEprom(i);
+        sm.writeByte(i, SMSBL_MODE, 0);
     }
     for (int i = 0; i < PointList.size(); i++)
     {
         SetPose(PointList[i]);
     }
+    if (status == Status::SINGLE_JOINT)
+        for(int i = 0;i < 6;i++){
+            if (i >= 3) sm.unLockEprom(i);
+            sm.WheelMode(i);
+        }
 }
