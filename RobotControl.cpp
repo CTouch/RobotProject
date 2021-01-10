@@ -12,16 +12,17 @@ RobotControl::RobotControl(const char *seritalPort)
         std::cout << "Failed to init smsbl motor!" << std::endl;
         return;
     }
+    status = Status::IDLE;
     // Reset();
-    sm.WheelMode(0);
-    sm.WheelMode(1);
-    sm.WheelMode(2);
-    sm.unLockEprom(3);
-    sm.WheelMode(3);
-    sm.unLockEprom(4);
-    sm.WheelMode(4);
-    sm.unLockEprom(5);
-    sm.WheelMode(5);
+    // sm.WheelMode(0);
+    // sm.WheelMode(1);
+    // sm.WheelMode(2);
+    // sm.unLockEprom(3);
+    // sm.WheelMode(3);
+    // sm.unLockEprom(4);
+    // sm.WheelMode(4);
+    // sm.unLockEprom(5);
+    // sm.WheelMode(5);
 };
 
 void RobotControl::SolveGlobalControl(const xbox_map_t &map)
@@ -159,6 +160,10 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
         if (map.start == 1)
         {
             std::cout << "start pushed\n";
+            for(int i = 0;i < 6;i++){
+                if (i >= 3) robotControl.sm.unLockEprom(i);
+                robotControl.sm.WheelMode(i);
+            }
             robotControl.status = Status::GLOBAL_CONTROL;
         }
         else if (map.back == 1)
@@ -188,7 +193,7 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
         }
         else if (robotControl.status == Status::GLOBAL_CONTROL){
             std::cout << "Global control\n";
-            // robotControl.SolveGlobalControl(map);
+            robotControl.SolveGlobalControl(map);
         }
         else if (robotControl.status == Status::REPERFORM){
             std::cout << "Reperform\n";
@@ -251,6 +256,7 @@ void RobotControl::RePerformNaive(){
         }
         SetPose(PointList[i]);
     }
+    status = Status::IDLE;
     // if (status == Status::SINGLE_JOINT)
     //     for(int i = 0;i < 6;i++){
     //         if (i >= 3) sm.unLockEprom(i);
@@ -277,11 +283,7 @@ void RobotControl::AddCurrentPose(){
 //     return pose;
 // }
 
-void RobotControl::RePerform0(){
-    for(int i = 0;i < 6;i++){
-        if (i >= 3) sm.unLockEprom(i);
-        sm.writeByte(i, SMSBL_MODE, 0);
-    }
+void RobotControl::RePerform0(){    
     for (int i = 0;i < PointList.size();i++){
         LearnPoint CurrentPose;
         for(int j = 0;j < 6;j++){

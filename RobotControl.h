@@ -14,6 +14,7 @@
 extern FeedBack feedback[6];
 
 enum Status{
+    IDLE,
     SINGLE_JOINT,
     GLOBAL_CONTROL,
     REPERFORM
