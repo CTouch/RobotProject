@@ -172,7 +172,14 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
         }
         else if (map.lo == 1){
             std::cout << "lo pushed\n";
+            if (robotControl.status == SINGLE_JOINT){
+                for(int i = 0;i < 6;i++){
+                    if (i >= 3) robotControl.sm.unLockEprom(i);
+                    robotControl.sm.writeByte(i, SMSBL_MODE, 0);
+                }
+            }
             robotControl.status = Status::REPERFORM;
+            
         }
 
         if (robotControl.status == Status::SINGLE_JOINT){
@@ -195,29 +202,32 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
 void RobotControl::SetPose(LearnPoint point){
     if (Check_Safe())
     {
-        sm.WheelMode(0);
-        sm.WheelMode(1);
-        sm.WheelMode(2);
-        sm.unLockEprom(3);
-        sm.WheelMode(3);
-        sm.unLockEprom(4);
-        sm.WheelMode(4);
-        sm.unLockEprom(5);
-        sm.WheelMode(5);
-        for (int i = 0; i < 6; i++)
-        {
-            sm.WriteSpe(i, 0, 100);
-        }
+        // sm.WheelMode(0);
+        // sm.WheelMode(1);
+        // sm.WheelMode(2);
+        // sm.unLockEprom(3);
+        // sm.WheelMode(3);
+        // sm.unLockEprom(4);
+        // sm.WheelMode(4);
+        // sm.unLockEprom(5);
+        // sm.WheelMode(5);
+        // for (int i = 0; i < 6; i++)
+        // {
+        //     sm.WriteSpe(i, 0, 100);
+        // }
         std::cout << "Unsafe Error" << std::endl;
-        exit(0);
+        // exit(0);
     }
     std::cout << "target:\n";
     for(int j = 0; j < 6;j++){
         std::cout << point.joint[j] << std::endl;
     }
-    sm.SyncWritePosEx(ID, 6, point.joint, Speed, ACC);
-    while(1){
+    // sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
+    for (;;){
+        sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
+        usleep(201001);
         bool FinishFlag = 1;
+        // if(j % 100000L) std::cout << "In wait loop\n";
         for(int i = 0;i < 6;i++){
             if(abs(feedback[i].Pos - point.joint[i]) > 10){
                FinishFlag = 0;
@@ -228,14 +238,14 @@ void RobotControl::SetPose(LearnPoint point){
     }
 }
 void RobotControl::RePerformNaive(){
-    for(int i = 0;i < 6;i++){
-        if (i >= 3) sm.unLockEprom(i);
-        sm.writeByte(i, SMSBL_MODE, 0);
-    }
+    // for(int i = 0;i < 6;i++){
+    //     if (i >= 3) sm.unLockEprom(i);
+    //     sm.writeByte(i, SMSBL_MODE, 0);
+    // }
 
     for (int i = 0; i < PointList.size(); i++)
     {
-        std::cout << "target:\n";
+        std::cout << "target" << i << ":\n";
         for(int j = 0; j < 6;j++){
             std::cout << PointList[i].joint[j] << std::endl;
         }

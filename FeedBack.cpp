@@ -25,6 +25,7 @@ void update_data()
 	{
 		if (sm.FeedBack(i) == -1)
 		{
+			break;
 			// std::cout << ("Read Error!\n") << std::endl;
 			// for (int j = 0; j < 5; j++)
 			// 	std::cout << ("\n") << std::endl;
