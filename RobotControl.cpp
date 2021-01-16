@@ -12,7 +12,12 @@ RobotControl::RobotControl(const char *seritalPort)
         std::cout << "Failed to init smsbl motor!" << std::endl;
         return;
     }
-    status = Status::IDLE;
+    status = Status::SINGLE_JOINT;
+    std::cout << "start pushed\n";
+    for(int i = 0;i < 6;i++){
+        if (i >= 3) sm.unLockEprom(i);
+        sm.WheelMode(i);
+    }
     // Reset();
     // sm.WheelMode(0);
     // sm.WheelMode(1);
@@ -74,21 +79,40 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map)
     std::cout << "motor angle (in degree):\n"
               << motor_angle << std::endl;
 
-    Eigen::Matrix<double, 6, 1> motor_speed = Cal_global_vel2motor_vel(motor_angle, global_speed);
+    Eigen::Matrix<double, 6, 1> motor_speed = Cal_global_vel2motor_vel(motor_angle, global_speed);  // 度/s
 
     std::cout << "motor vel (in lin):" << std::endl;
+    // bool flag = Check_Safe();
     for (int i = 0; i < 6; i++)
     {
-        if (i == 2)
+        double spe;
+        double T_interval = 0.2;    // 0.2s
+        Eigen::Matrix<double, 6, 1> delta_joint_angle;
+        for (int i = 0;i < 6;i++)
         {
-            std::cout << DEG2VEL(direction[2] * motor_speed(2, 0) - motor_speed(1, 0)) << std::endl;
-            sm.WriteSpe(i, DEG2VEL(direction[2] * motor_speed(2, 0) - motor_speed(1, 0)), 100);
+            delta_joint_angle(i,0) = motor_speed(i,0) * T_interval * direction[i];  // 度
+            delta_joint_angle(i,0) = RAD2LIN(delta_joint_angle(i,0));               // s16 用于发送
         }
-        else
-        {
-            std::cout << direction[i] * DEG2VEL(motor_speed(i, 0)) << std::endl;
-            sm.WriteSpe(i, direction[i] * DEG2VEL(motor_speed(i, 0)), 100);
+        delta_joint_angle(2,0) -= delta_joint_angle(1,0);   
+        LearnPoint tp;
+        for (int i = 0;i < 6;i++){
+            tp.joint[i] = feedback[i].Joint + delta_joint_angle(i,0);
         }
+        SetPose(tp);
+        // if (i == 2) // joint 2 is special
+        // {
+        //     spe = DEG2VEL(direction[2] * motor_speed(2, 0) - motor_speed(1, 0));
+        //     // sm.WriteSpe(i, DEG2VEL(direction[2] * motor_speed(2, 0) - motor_speed(1, 0)), 100);
+
+        // }
+        // else
+        // {
+        //     // spe = direction[i] * DEG2VEL(motor_speed(i, 0));
+        //     // std::cout << direction[i] * DEG2VEL(motor_speed(i, 0)) << std::endl;
+        //     // sm.WriteSpe(i, direction[i] * DEG2VEL(motor_speed(i, 0)), 100);
+        // }
+        // std::cout << spe << std::endl;
+
     }
 }
 void RobotControl::SolveXbox(const xbox_map_t &map)
@@ -142,10 +166,12 @@ void RobotControl::SolveXbox(const xbox_map_t &map)
     if (map.lb && !map.rb)
     {
         sm.WriteSpe(1, 400, 100);
+        sm.WriteSpe(2, -400, 100);
     }
     else if (!map.lb && map.rb)
     {
         sm.WriteSpe(1, -400, 100);
+        sm.WriteSpe(2, 400, 100);
     }
     else
     {
@@ -229,7 +255,7 @@ void RobotControl::SetPose(LearnPoint point){
     }
     // sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
     for (;;){
-        Check_Theta(point);
+        // Check_Theta(point);
         sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
         usleep(201001);
         bool FinishFlag = 1;
@@ -293,3 +319,47 @@ void RobotControl::RePerform0(){
         // for(int j = 0;j < 0)
     }
 }
+
+double theta_lb[6]={400,1100,3700,500,2048,-1};
+double theta_ub[6]={3600,3000,4700,3600,4000,-1};
+
+bool RobotControl::Check_Safe()
+{
+	bool ret = false;
+
+	// check load
+	for (int i = 0; i < 6; i++)
+	{
+		if (abs(feedback[i].Load) > MAX_LOAD)
+		{
+			ret = true;
+			std::cout << "Load Unsafe! Joint" << i << " Load " << feedback[i].Load << std::endl;
+		}
+		if (abs(feedback[i].Speed) > MAX_VEL)
+		{
+			ret = true;
+			std::cout << "Speed Unsafe! Joint" << i << " Speed " << feedback[i].Speed << std::endl;
+		}																			
+		if (ret) break;
+	}
+
+	return ret;
+}
+
+void RobotControl::Check_Theta(LearnPoint &send_theta)
+{
+    for (int i = 0; i < 6; i++)
+    {
+        if (feedback[i].Pos < theta_lb[i])
+        {
+            send_theta.joint[i] = theta_lb[i];
+            std::cout << "Joint " << i << ": Too Small\n";
+        }
+        else if (feedback[i].Pos > theta_ub[i])
+        {
+            send_theta.joint[i] = theta_ub[i];
+            std::cout << "Joint " << i << ": Too Large\n";
+        }
+    }
+}
+

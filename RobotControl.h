@@ -8,7 +8,7 @@
 #include "global_vel2motor_vel.h"
 #include "math.h"
 #include <vector>
-#include "Check.h"
+// #include "Check.h"
 #include "Utils.h"
 
 extern FeedBack feedback[6];
@@ -41,6 +41,11 @@ private:
     u8 ACC[6] = {50, 50, 50, 50, 50, 50};
     const int RePerformStep = 10;
     std::vector<LearnPoint> PointList;
+    double theta_lb[6]={400,1100,3700,500,2048,-1};
+    double theta_ub[6]={3600,3000,4700,3600,4000,-1};
+    const int MAX_LOAD = 500;
+    const int MAX_VEL = 1000;
+
 public:
     SMSBL sm;
     RobotControl(const char * seritalPort);
@@ -64,5 +69,9 @@ public:
     void RePerformNaive();
 
     void RePerform0();
+
+    // check safe
+    bool Check_Safe(); 
+    void Check_Theta(LearnPoint &send_theta);
 };
 #endif
