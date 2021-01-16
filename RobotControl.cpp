@@ -74,7 +74,7 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map)
         std::cout << feedback[i].Pos << std::endl;
     }
     // motor_angle(2, 0) = direction[2] * (RAD2LIN(direction[1]*motor_angle(1,0)) + sm.ReadPos(-1));
-    motor_angle(2,0) = direction[2] * (RAD2LIN(feedback[2].Pos) + RAD2LIN(feedback[1].Pos));
+    motor_angle(2, 0) = direction[2] * (RAD2LIN(feedback[2].Pos) + RAD2LIN(feedback[1].Pos));
 
     std::cout << "motor angle (in degree):\n"
               << motor_angle << std::endl;
@@ -186,8 +186,10 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
         if (map.start == 1)
         {
             std::cout << "start pushed\n";
-            for(int i = 0;i < 6;i++){
-                if (i >= 3) robotControl.sm.unLockEprom(i);
+            for (int i = 0; i < 6; i++)
+            {
+                if (i >= 3)
+                    robotControl.sm.unLockEprom(i);
                 robotControl.sm.WheelMode(i);
             }
             robotControl.status = Status::GLOBAL_CONTROL;
@@ -197,31 +199,38 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
             std::cout << "back pushed\n";
             robotControl.status = Status::SINGLE_JOINT;
         }
-        else if (map.home == 1){
+        else if (map.home == 1)
+        {
             std::cout << "home pushed\n";
             robotControl.AddCurrentPose();
         }
-        else if (map.lo == 1){
+        else if (map.lo == 1)
+        {
             std::cout << "lo pushed\n";
-            if (robotControl.status == SINGLE_JOINT){
-                for(int i = 0;i < 6;i++){
-                    if (i >= 3) robotControl.sm.unLockEprom(i);
+            if (robotControl.status == SINGLE_JOINT)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    if (i >= 3)
+                        robotControl.sm.unLockEprom(i);
                     robotControl.sm.writeByte(i, SMSBL_MODE, 0);
                 }
             }
             robotControl.status = Status::REPERFORM;
-            
         }
 
-        if (robotControl.status == Status::SINGLE_JOINT){
+        if (robotControl.status == Status::SINGLE_JOINT)
+        {
             // std::cout << "single_joint\n";
             robotControl.SolveXbox(map);
         }
-        else if (robotControl.status == Status::GLOBAL_CONTROL){
+        else if (robotControl.status == Status::GLOBAL_CONTROL)
+        {
             std::cout << "Global control\n";
             robotControl.SolveGlobalControl(map);
         }
-        else if (robotControl.status == Status::REPERFORM){
+        else if (robotControl.status == Status::REPERFORM)
+        {
             std::cout << "Reperform\n";
             robotControl.RePerformNaive();
         }
@@ -230,7 +239,8 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
     }
 }
 
-void RobotControl::SetPose(LearnPoint point){
+void RobotControl::SetPose(LearnPoint point)
+{
     if (Check_Safe())
     {
         // sm.WheelMode(0);
@@ -250,7 +260,8 @@ void RobotControl::SetPose(LearnPoint point){
         // exit(0);
     }
     std::cout << "target:\n";
-    for(int j = 0; j < 6;j++){
+    for (int j = 0; j < 6; j++)
+    {
         std::cout << point.joint[j] << std::endl;
     }
     // sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
@@ -260,16 +271,20 @@ void RobotControl::SetPose(LearnPoint point){
         usleep(201001);
         bool FinishFlag = 1;
         // if(j % 100000L) std::cout << "In wait loop\n";
-        for(int i = 0;i < 6;i++){
-            if(abs(feedback[i].Pos - point.joint[i]) > 10){
-               FinishFlag = 0;
-               break;
+        for (int i = 0; i < 6; i++)
+        {
+            if (abs(feedback[i].Pos - point.joint[i]) > 10)
+            {
+                FinishFlag = 0;
+                break;
             }
         }
-        if(FinishFlag) break;
+        if (FinishFlag)
+            break;
     }
 }
-void RobotControl::RePerformNaive(){
+void RobotControl::RePerformNaive()
+{
     // for(int i = 0;i < 6;i++){
     //     if (i >= 3) sm.unLockEprom(i);
     //     sm.writeByte(i, SMSBL_MODE, 0);
@@ -278,7 +293,8 @@ void RobotControl::RePerformNaive(){
     for (int i = 0; i < PointList.size(); i++)
     {
         std::cout << "target" << i << ":\n";
-        for(int j = 0; j < 6;j++){
+        for (int j = 0; j < 6; j++)
+        {
             std::cout << PointList[i].joint[j] << std::endl;
         }
         SetPose(PointList[i]);
@@ -291,13 +307,18 @@ void RobotControl::RePerformNaive(){
     //     }
 }
 
-void RobotControl::AddCurrentPose(){
+void RobotControl::AddCurrentPose()
+{
     LearnPoint pose;
-    for(int i = 0;i < 6;i++){
+    for (int i = 0; i < 6; i++)
+    {
         pose.joint[i] = feedback[i].Pos;
         std::cout << "Pose " << i << ": " << pose.joint[i] << std::endl;
     }
     std::cout << std::endl;
+
+    // forward here
+    forward(pose);
 
     PointList.push_back(pose);
 }
@@ -310,13 +331,17 @@ void RobotControl::AddCurrentPose(){
 //     return pose;
 // }
 
-void RobotControl::RePerform0(){    
-    for (int i = 0;i < PointList.size();i++){
-        LearnPoint CurrentPose;
-        for(int j = 0;j < 6;j++){
-            CurrentPose.joint[j] = feedback[j].Pos;
+void RobotControl::RePerform0()
+{
+
+    for (int i = 0; i < PointList.size()-1; i++)
+    {
+        std::cout << "target" << i << ":\n";
+        for (int j = 0; j < 6; j++)
+        {
+            std::cout << PointList[i].joint[j] << std::endl;
         }
-        // for(int j = 0;j < 0)
+        SetPose_Interpolate(PointList[i], PointList[i+1]);
     }
 }
 
@@ -363,3 +388,92 @@ void RobotControl::Check_Theta(LearnPoint &send_theta)
     }
 }
 
+
+void RobotControl::SetPose_Interpolate(LearnPoint curPoint, LearnPoint nextPoint)
+{
+    if (Check_Safe())
+    {
+        // sm.WheelMode(0);
+        // sm.WheelMode(1);
+        // sm.WheelMode(2);
+        // sm.unLockEprom(3);
+        // sm.WheelMode(3);
+        // sm.unLockEprom(4);
+        // sm.WheelMode(4);
+        // sm.unLockEprom(5);
+        // sm.WheelMode(5);
+        // for (int i = 0; i < 6; i++)
+        // {
+        //     sm.WriteSpe(i, 0, 100);
+        // }
+        std::cout << "Unsafe Error" << std::endl;
+        // exit(0);
+    }
+
+
+    // get global interpolate point
+    std::vector<LearnPoint> Interpolation_Point;
+
+
+    for (int i = 0; i < Interpolation_Point.size(); i++)
+    {
+        Check_Theta(Interpolation_Point[i]);
+        sm.SyncWritePosEx(ID, 5, Interpolation_Point[i].joint, Speed, ACC);
+        usleep(201001);
+    }
+
+    // for (;;)
+    // {
+    //     Check_Theta(point);
+    //     sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
+    //     usleep(201001);
+    //     bool FinishFlag = 1;
+    //     for (int i = 0; i < 6; i++)
+    //     {
+    //         if (abs(feedback[i].Pos - point.joint[i]) > 10)
+    //         {
+    //             FinishFlag = 0;
+    //             break;
+    //         }
+    //     }
+    //     if (FinishFlag)
+    //         break;
+    // }
+}
+
+std::vector<LearnPoint> RobotControl::Interpolation(LearnPoint curPoint, LearnPoint nextPoint)
+{
+    std::vector<LearnPoint> Interpolation_Point;
+    double dx = (nextPoint.x - curPoint.x);
+    double dy = (nextPoint.y - curPoint.y);
+    double dz = (nextPoint.z - curPoint.z);
+    double lineLen = sqrt(dx*dx + dy*dy + dz*dz);
+
+    double x_step = LEN_STEP * dx / lineLen;
+    double y_step = LEN_STEP * dy / lineLen;
+    double z_step = LEN_STEP * dz / lineLen;
+
+    int stepNum = floor(lineLen / LEN_STEP);
+    LearnPoint point;
+    point.x = curPoint.x;
+    point.y = curPoint.y;
+    point.z = curPoint.z;
+    Interpolation_Point.push_back(point);
+
+    for (int i = 1; i < stepNum; i++)
+    {
+        point.x += x_step;
+        point.y += y_step;
+        point.z += z_step;
+
+        // inverse here
+        inverse(point);
+        Interpolation_Point.push_back(point);
+    }
+    point.x = nextPoint.x;
+    point.y = nextPoint.y;
+    point.z = nextPoint.z;
+    Interpolation_Point.push_back(point);
+
+    return Interpolation_Point;
+}
