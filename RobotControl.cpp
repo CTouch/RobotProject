@@ -70,11 +70,11 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map)
     {
         // sm.FeedBack(i);
 
-        motor_angle(i, 0) = direction[i] * LIN2RAD(feedback[i].Pos);
+        motor_angle(i, 0) = direction[i] * LIN2DEG(feedback[i].Pos);
         std::cout << feedback[i].Pos << std::endl;
     }
-    // motor_angle(2, 0) = direction[2] * (RAD2LIN(direction[1]*motor_angle(1,0)) + sm.ReadPos(-1));
-    motor_angle(2, 0) = direction[2] * (RAD2LIN(feedback[2].Pos) + RAD2LIN(feedback[1].Pos));
+    // motor_angle(2, 0) = direction[2] * (DEG2LIN(direction[1]*motor_angle(1,0)) + sm.ReadPos(-1));
+    motor_angle(2, 0) = direction[2] * (DEG2LIN(feedback[2].Pos) + DEG2LIN(feedback[1].Pos));
 
     std::cout << "motor angle (in degree):\n"
               << motor_angle << std::endl;
@@ -91,7 +91,7 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map)
         for (int i = 0;i < 6;i++)
         {
             delta_joint_angle(i,0) = motor_speed(i,0) * T_interval * direction[i];  // 度
-            delta_joint_angle(i,0) = RAD2LIN(delta_joint_angle(i,0));               // s16 用于发送
+            delta_joint_angle(i,0) = DEG2LIN(delta_joint_angle(i,0));               // s16 用于发送
         }
         delta_joint_angle(2,0) -= delta_joint_angle(1,0);   
         LearnPoint tp;
@@ -412,7 +412,7 @@ void RobotControl::SetPose_Interpolate(LearnPoint curPoint, LearnPoint nextPoint
 
 
     // get global interpolate point
-    std::vector<LearnPoint> Interpolation_Point;
+    std::vector<LearnPoint> Interpolation_Point = Interpolation(curPoint, nextPoint);
 
 
     for (int i = 0; i < Interpolation_Point.size(); i++)
@@ -440,13 +440,12 @@ void RobotControl::SetPose_Interpolate(LearnPoint curPoint, LearnPoint nextPoint
     //         break;
     // }
 }
-
-std::vector<LearnPoint> RobotControl::Interpolation(LearnPoint curPoint, LearnPoint nextPoint)
+std::vector<LearnPoint> Interpolation(LearnPoint curPoint, LearnPoint nextPoint)
 {
     std::vector<LearnPoint> Interpolation_Point;
-    double dx = (nextPoint.x - curPoint.x);
-    double dy = (nextPoint.y - curPoint.y);
-    double dz = (nextPoint.z - curPoint.z);
+    double dx = (nextPoint.pos[0] - curPoint.pos[0]);
+    double dy = (nextPoint.pos[1] - curPoint.pos[1]);
+    double dz = (nextPoint.pos[2] - curPoint.pos[2]);
     double lineLen = sqrt(dx*dx + dy*dy + dz*dz);
 
     double x_step = LEN_STEP * dx / lineLen;
@@ -455,24 +454,34 @@ std::vector<LearnPoint> RobotControl::Interpolation(LearnPoint curPoint, LearnPo
 
     int stepNum = floor(lineLen / LEN_STEP);
     LearnPoint point;
-    point.x = curPoint.x;
-    point.y = curPoint.y;
-    point.z = curPoint.z;
-    Interpolation_Point.push_back(point);
+    LearnPoint init;
+    for (int i = 0; i < 6; i++)
+    {
+        // point.joint[i] = curPoint.joint[i];
+        init.joint[i] = curPoint.joint[i];
+        point.pos[i] = curPoint.pos[i];
+        init.pos[i] = curPoint.pos[i];
+    }
+    // current point does not need to be in list
+    // Interpolation_Point.push_back(point);
 
     for (int i = 1; i < stepNum; i++)
     {
-        point.x += x_step;
-        point.y += y_step;
-        point.z += z_step;
+        point.pos[0] += x_step;
+        point.pos[1] += y_step;
+        point.pos[2] += z_step;
 
         // inverse here
-        inverse(point);
+        inverse(point, init);
+        for (int i = 0; i < 6; i++)
+        {
+            init.joint[i] = point.joint[i];
+        }
         Interpolation_Point.push_back(point);
     }
-    point.x = nextPoint.x;
-    point.y = nextPoint.y;
-    point.z = nextPoint.z;
+    point.pos[0] = nextPoint.pos[0];
+    point.pos[1] = nextPoint.pos[1];
+    point.pos[2] = nextPoint.pos[2];
     Interpolation_Point.push_back(point);
 
     return Interpolation_Point;

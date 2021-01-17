@@ -25,8 +25,8 @@ enum Status{
 #define THRESHOLD 5
 #define LEN_STEP 1
 
-#define RAD2LIN(x) (((x)*4096/360)+2048)
-#define LIN2RAD(x) (((x)-2048)*360/4096)
+// #define RAD2DEG(x) (((x)*4096/360)+2048)
+// #define LIN2DEG(x) (((x)-2048)*360/4096)
 #define DEG2VEL(x) ((x)*4096/360)
 #define VEL2DEG(x) ((x)*360/4096)
 
