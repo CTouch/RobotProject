@@ -17,21 +17,12 @@ RobotControl::RobotControl(const char *seritalPort)
     for(int i = 0;i < 6;i++){
         if (i >= 3) sm.unLockEprom(i);
         sm.WheelMode(i);
-    }
-    // Reset();
-    // sm.WheelMode(0);
-    // sm.WheelMode(1);
-    // sm.WheelMode(2);
-    // sm.unLockEprom(3);
-    // sm.WheelMode(3);
-    // sm.unLockEprom(4);
-    // sm.WheelMode(4);
-    // sm.unLockEprom(5);
-    // sm.WheelMode(5);
-};
+    }   
+}
 
 void RobotControl::SolveGlobalControl(const xbox_map_t &map)
 {
+    std::cout << "-------------global control------------\n";
     Eigen::Matrix<double, 6, 1> global_speed;
     global_speed << 0, 0, 0, 0, 0, 0;
 
@@ -62,27 +53,30 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map)
         global_speed(2, 0) = -1 * GLOBAL_VEL;
     }
 
+    bool flag_stay = 1;
+    for(int i = 0;i < 6;i++){
+        if(global_speed(i, 0) > 10 || global_speed(i, 0) < -10){
+            flag_stay = 0;
+            break;
+        }
+    }
+    if (flag_stay) return;  // 静止状态不需要操作
     Eigen::Matrix<double, 6, 1> motor_angle;
-    motor_angle << 0, 0, 0, 0, 0, 0;
 
     std::cout << "motor angle (in lin):" << std::endl;
     for (int i = 0; i < 6; i++)
     {
-        // sm.FeedBack(i);
-
         motor_angle(i, 0) = direction[i] * LIN2DEG(feedback[i].Pos);
         std::cout << feedback[i].Pos << std::endl;
     }
-    // motor_angle(2, 0) = direction[2] * (DEG2LIN(direction[1]*motor_angle(1,0)) + sm.ReadPos(-1));
-    motor_angle(2, 0) = direction[2] * (DEG2LIN(feedback[2].Pos) + DEG2LIN(feedback[1].Pos));
+    motor_angle(2, 0) -= motor_angle(1, 0);
 
     std::cout << "motor angle (in degree):\n"
               << motor_angle << std::endl;
 
     Eigen::Matrix<double, 6, 1> motor_speed = Cal_global_vel2motor_vel(motor_angle, global_speed);  // 度/s
 
-    std::cout << "motor vel (in lin):" << std::endl;
-    // bool flag = Check_Safe();
+    LearnPoint tp;
     for (int i = 0; i < 6; i++)
     {
         double spe;
@@ -91,29 +85,17 @@ void RobotControl::SolveGlobalControl(const xbox_map_t &map)
         for (int i = 0;i < 6;i++)
         {
             delta_joint_angle(i,0) = motor_speed(i,0) * T_interval * direction[i];  // 度
-            delta_joint_angle(i,0) = DEG2LIN(delta_joint_angle(i,0));               // s16 用于发送
+            delta_joint_angle(i,0) = 4096.0 / 360 *(delta_joint_angle(i,0));               // s16 用于发送
         }
-        delta_joint_angle(2,0) -= delta_joint_angle(1,0);   
-        LearnPoint tp;
+        delta_joint_angle(2,0) -= delta_joint_angle(1,0);
+        delta_joint_angle(1,0) -= 4;
+        delta_joint_angle(2,0) -= 3;
         for (int i = 0;i < 6;i++){
-            tp.joint[i] = feedback[i].Joint + delta_joint_angle(i,0);
+            tp.joint[i] = feedback[i].Pos + delta_joint_angle(i,0) ;        // s16 用于发送
         }
-        SetPose(tp);
-        // if (i == 2) // joint 2 is special
-        // {
-        //     spe = DEG2VEL(direction[2] * motor_speed(2, 0) - motor_speed(1, 0));
-        //     // sm.WriteSpe(i, DEG2VEL(direction[2] * motor_speed(2, 0) - motor_speed(1, 0)), 100);
-
-        // }
-        // else
-        // {
-        //     // spe = direction[i] * DEG2VEL(motor_speed(i, 0));
-        //     // std::cout << direction[i] * DEG2VEL(motor_speed(i, 0)) << std::endl;
-        //     // sm.WriteSpe(i, direction[i] * DEG2VEL(motor_speed(i, 0)), 100);
-        // }
-        // std::cout << spe << std::endl;
-
     }
+    SetPose(tp);
+    // usleep(200000);
 }
 void RobotControl::SolveXbox(const xbox_map_t &map)
 {
@@ -190,12 +172,18 @@ void RobotControl::SolveXboxThread(RobotControl &robotControl, const xbox_map_t 
             {
                 if (i >= 3)
                     robotControl.sm.unLockEprom(i);
-                robotControl.sm.WheelMode(i);
+                robotControl.sm.writeByte(i, SMSBL_MODE, 0);
             }
             robotControl.status = Status::GLOBAL_CONTROL;
         }
         else if (map.back == 1)
         {
+            for (int i = 0; i < 6; i++)
+            {
+                if (i >= 3)
+                    robotControl.sm.unLockEprom(i);
+                robotControl.sm.WheelMode(i);
+            }
             std::cout << "back pushed\n";
             robotControl.status = Status::SINGLE_JOINT;
         }
@@ -268,12 +256,12 @@ void RobotControl::SetPose(LearnPoint point)
     for (;;){
         // Check_Theta(point);
         sm.SyncWritePosEx(ID, 5, point.joint, Speed, ACC);
-        usleep(201001);
+        usleep(20000);
         bool FinishFlag = 1;
         // if(j % 100000L) std::cout << "In wait loop\n";
         for (int i = 0; i < 6; i++)
         {
-            if (abs(feedback[i].Pos - point.joint[i]) > 10)
+            if (abs(feedback[i].Pos - point.joint[i]) > 15)
             {
                 FinishFlag = 0;
                 break;
@@ -300,6 +288,7 @@ void RobotControl::RePerformNaive()
         SetPose(PointList[i]);
     }
     status = Status::IDLE;
+    std::cout << "--------finish reperform naive-------\n";
     // if (status == Status::SINGLE_JOINT)
     //     for(int i = 0;i < 6;i++){
     //         if (i >= 3) sm.unLockEprom(i);
